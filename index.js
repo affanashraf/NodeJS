@@ -1,6 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-
+let Product = require("./Modules/product");
 const app = express();
 app.listen(3000, (req, res) => {
   console.log("Connected to API");
@@ -14,15 +14,28 @@ mongoose
   .catch((err) => console.log("Not connected to database" + err));
 
 //CRUD Operations
-app.get("/mongo_db", (req, res) => {
-  res.send("GET request to the homepage");
+//read
+app.get("/mongo_db/products", async (req, res) => {
+  try {
+    const products = await Product.find({});
+    res.send(products);
+  } catch (err) {
+    console.log("Cannot get data\n" + err);
+  }
 });
-app.put("", (req, res) => {
-  res.send("PUT request to the homepage");
+//write
+app.post("/mongo_db/products/:name/:price/:profit/:qty", async (req, res) => {
+  const product = new Product(req.params);
+  try {
+    await product.save();
+    res.send(req.params);
+  } catch (err) {
+    console.log("Not POSTED\n" + err);
+  }
 });
+//update
+app.put("", (req, res) => {});
+//delete
 app.delete("", (req, res) => {
   res.send("DELETE request to the homepage");
-});
-app.post("", (req, res) => {
-  res.send("POST request to the homepage");
 });
